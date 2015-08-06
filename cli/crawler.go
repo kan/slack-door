@@ -88,9 +88,9 @@ func addChannelHistory(s *slack.Slack, db *sql.DB, channel, oldest string) (stri
 
 	if len(history.Messages) > 0 {
 		return history.Messages[0].Timestamp, nil
-	} else {
-		return "", nil
 	}
+
+	return "", nil
 }
 
 func timestampToTime(timestamp string) time.Time {
