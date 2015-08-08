@@ -10,7 +10,7 @@ import (
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/naoina/denco"
+	"github.com/julienschmidt/httprouter"
 	"github.com/naoina/toml"
 )
 
@@ -45,8 +45,8 @@ type channel struct {
 	Name string `json:"name"`
 }
 
-func ChannelList(c config) func(w http.ResponseWriter, r *http.Request, params denco.Params) {
-	return func(w http.ResponseWriter, r *http.Request, params denco.Params) {
+func ChannelList(c config) func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		db, err := sql.Open("mysql", c.Datasource)
 		if err != nil {
 			log.Fatal(err)
@@ -91,8 +91,8 @@ type messageListResponse struct {
 	Messages []message `json:"messages"`
 }
 
-func MessageList(c config) func(w http.ResponseWriter, r *http.Request, params denco.Params) {
-	return func(w http.ResponseWriter, r *http.Request, params denco.Params) {
+func MessageList(c config) func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		db, err := sql.Open("mysql", c.Datasource)
 		if err != nil {
 			log.Fatal(err)
@@ -111,7 +111,10 @@ func MessageList(c config) func(w http.ResponseWriter, r *http.Request, params d
 	    WHERE
 		    c.name = ? AND
 			DATE(m.timestamp) = ?
-		`, params.Get("channel"), fmt.Sprintf("%s-%s-%s", params.Get("year"), params.Get("month"), params.Get("day")))
+		`,
+			p.ByName("channel"),
+			fmt.Sprintf("%s-%s-%s", p.ByName("year"), p.ByName("month"), p.ByName("day")),
+		)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -132,22 +135,17 @@ func MessageList(c config) func(w http.ResponseWriter, r *http.Request, params d
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(&messageListResponse{Messages: messages, Channel: params.Get("channel")})
+		json.NewEncoder(w).Encode(&messageListResponse{Messages: messages, Channel: p.ByName("channel")})
 	}
 }
 
 func main() {
 	c := configFromFile()
-	mux := denco.NewMux()
 
-	handler, err := mux.Build([]denco.Handler{
-		mux.GET("/channels", ChannelList(c)),
-		mux.GET("/log/:channel/:year/:month/:day", MessageList(c)),
-	})
+	router := httprouter.New()
+	router.Handler("GET", "/", http.FileServer(http.Dir("./assets/")))
+	router.GET("/channels", ChannelList(c))
+	router.GET("/log/:channel/:year/:month/:day", MessageList(c))
 
-	if err != nil {
-		panic(err)
-	}
-
-	http.ListenAndServe(":8080", handler)
+	http.ListenAndServe(":8080", router)
 }
