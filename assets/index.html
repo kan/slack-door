@@ -1,5 +1,22 @@
 <html>
-  <title>Slack Door</title>
+  <head>
+    <meta charset="UTF-8">
+    <title>Slack Door</title>
+    <link rel="stylesheet" href="/css/pure-min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/mithril.min.js"></script>
+    <script src="/js/channel.js"></script>
+    <script src="/js/log.js"></script>
+    <script>
+      window.onload = function() {
+        m.route.mode = 'pathname';
+        m.route(document.body, "/", {
+          "/": ChannelList,
+          "/:channel/:year/:month/:day": Log
+        });
+      };
+    </script>
+  </head>
   <body>
     Slack Door
   </body>

@@ -139,11 +139,20 @@ func MessageList(c config) func(w http.ResponseWriter, r *http.Request, p httpro
 	}
 }
 
+type StaticFileHandler struct {};
+
+func (s *StaticFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "./assets/index.html")
+}
+
 func main() {
 	c := configFromFile()
 
 	router := httprouter.New()
 	router.Handler("GET", "/", http.FileServer(http.Dir("./assets/")))
+	router.NotFound = &StaticFileHandler{}
+	router.ServeFiles("/js/*filepath", http.Dir("./assets/js/"))
+	router.ServeFiles("/css/*filepath", http.Dir("./assets/css/"))
 	router.GET("/channels", ChannelList(c))
 	router.GET("/log/:channel/:year/:month/:day", MessageList(c))
 
