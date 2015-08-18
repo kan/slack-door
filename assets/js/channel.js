@@ -17,7 +17,8 @@ var ChannelList = {
     return m("ul", [
         ctrl.channels().map(function(channel, index) {
           return m("li", { key: channel.id },
-                   m("a", {href: "/"+channel.name+"/2015/08/18", config: m.route}, channel.name));
+                  m.component(LogLink, { channel: channel.name, date: new Date(), delta: 0, label: channel.name })
+                  );
         })
     ]);
   }
