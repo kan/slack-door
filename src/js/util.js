@@ -19,6 +19,6 @@ var LogLink = {
                 label = "<<" + label;
             }
         }
-        return {tag: "a", attrs: {href:apiURL, config:m.route}, children: [label]};
+        return <a href={apiURL} config={m.route}>{label}</a>;
     }
 };

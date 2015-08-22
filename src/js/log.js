@@ -21,20 +21,20 @@ var Log = {
     this.date = new Date(m.route.param("year"), m.route.param("month")-1, m.route.param("day"));
   },
   view: function(ctrl) {
-    var navi = {tag: "p", attrs: {}, children: [
-                m.component(LogLink, {channel:ctrl.channel, date:ctrl.date, delta:-1}), 
-                {tag: "a", attrs: {href:"/", config:m.route}, children: ["チャンネル一覧へ戻る"]}, 
-                m.component(LogLink, {channel:ctrl.channel, date:ctrl.date, delta:1})
-               ]};
+    var navi = <p>
+                <LogLink channel={ctrl.channel} date={ctrl.date} delta={-1} />
+                <a href="/" config={m.route}>チャンネル一覧へ戻る</a>
+                <LogLink channel={ctrl.channel} date={ctrl.date} delta={1} />
+               </p>;
     return m("div", [
         navi,
         ctrl.messages().map(function(msg, index) {
-          return {tag: "div", attrs: {className:"log", key:msg.ts}, children: [
-                   {tag: "img", attrs: {src:msg.user.icon}}, 
-                   {tag: "span", attrs: {className:"name"}, children: [msg.user.name]}, 
-                   {tag: "span", attrs: {className:"time"}, children: [msg.ts]}, 
-                   {tag: "span", attrs: {className:"msg"}, children: [msg.text]}
-                 ]};
+          return <div className="log" key={msg.ts}>
+                   <img src={msg.user.icon} />
+                   <span className="name">{msg.user.name}</span>
+                   <span className="time">{msg.ts}</span>
+                   <span className="msg">{msg.text}</span>
+                 </div>;
         }),
         navi
     ]);

@@ -16,10 +16,10 @@ var ChannelList = {
   view: function(ctrl) {
     return m("ul", [
         ctrl.channels().map(function(channel, index) {
-          return {tag: "li", attrs: {key:channel.id}, children: [
-                   m.component(LogLink, {channel:channel.name, date:new Date(), delta:0, 
-                            label:channel.name})
-                 ]};
+          return <li key={channel.id}>
+                   <LogLink channel={channel.name} date={new Date()} delta={0} 
+                            label={channel.name} />
+                 </li>;
         })
     ]);
   }

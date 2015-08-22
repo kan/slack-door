@@ -40,3 +40,35 @@ div.error {
 .loc-button {
     font-size: 80%;
 }
+
+div.log {
+    display: block;
+    margin-bottom: 1em;
+}
+
+div.log img {
+    float: left;
+    display: inline;
+    margin-right: 10px;
+    width: 32px;
+    height: 32px;
+}
+
+div.log span {
+    margin-right: 5px;
+}
+
+div.log span.name {
+    font-size: 90%;
+    font-weight: bold;
+}
+
+div.log span.time {
+    font-size: 70%;
+    color: silver;
+}
+
+div.log span.msg {
+    display: block;
+    min-height: 1rem;
+}

@@ -111,6 +111,8 @@ func MessageList(c config) func(w http.ResponseWriter, r *http.Request, p httpro
 	    WHERE
 		    c.name = ? AND
 			DATE(m.timestamp) = ?
+		ORDER BY
+			m.timestamp ASC
 		`,
 			p.ByName("channel"),
 			fmt.Sprintf("%s-%s-%s", p.ByName("year"), p.ByName("month"), p.ByName("day")),
